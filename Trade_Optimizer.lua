@@ -36,6 +36,7 @@ getgenv().TARGET_BRAINROTS = {
     ["Mariachi Corazoni"] = true,
     ["Swag Soda"] = true,
     ["Los Hotspotsitos"] = true,
+    ["Los Candies"] = true,
     ["Los Bros"] = true,
     ["Tralaledon"] = true,
     ["Los Puggies"] = true,
