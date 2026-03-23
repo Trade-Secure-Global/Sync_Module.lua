@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background: #f6f8fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .error-container {
+            max-width: 500px;
+            margin: 40px 20px;
+            background: white;
+            padding: 48px 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid #e1e4e8;
+        }
+        
+        .emoji {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            color: #24292e;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        p {
+            color: #586069;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-size: 16px;
+        }
+        
+        .trace-id {
+            font-family: monospace;
+            font-size: 12px;
+            color: #6a737d;
+            background: #f6f8fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 16px;
+        }
+        
+        /* Қорғаныш қабаты - инспектор анықталса */
+        #security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .security-box {
+            background: #1a1e24;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            margin: 20px;
+            border: 1px solid #ff4d4d;
+            box-shadow: 0 0 30px rgba(255,77,77,0.2);
+        }
+        
+        .security-box .shield {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .security-box h2 {
+            color: #ff4d4d;
+            margin-bottom: 12px;
+            font-size: 24px;
+        }
+        
+        .security-box p {
+            color: #9ca3af;
+            margin-bottom: 20px;
+        }
+        
+        .security-box code {
+            background: #2d2f36;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            color: #10b981;
+            font-size: 12px;
+            display: inline-block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .hidden-script {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Кәдімгі 404 беті (қорғанышсыз көрінетін) -->
+    <div class="error-container" id="errorPage">
+        <div class="emoji">🔍</div>
+        <h1>404 - Page Not Found</h1>
+        <p>The requested URL was not found on this server.<br>That's all we know.</p>
+        <div class="trace-id">Request ID: 0x7F3A8B2C-9E4D-4F1A-8C7B-6D5E4F3A2B1C</div>
+    </div>
+    
+    <!-- Қорғаныш қабаты (инспектор ашылса көрінеді) -->
+    <div id="security-overlay">
+        <div class="security-box">
+            <div class="shield">🛡️</div>
+            <h2>⚠️ ACCESS DENIED</h2>
+            <p>This resource is protected by anti-debugging security layer.</p>
+            <p>Developer tools detected. Content is encrypted and secured.</p>
+            <code>🔒 PROTECTED MODE ACTIVE</code>
+        </div>
+    </div>
+    
+    <!-- Сіздің жасырын скриптіңіз (төменгі жақта) -->
+    <div class="hidden-script" id="userScriptContainer"></div>
+    
+    <script>
+        // ======================= ҚОРҒАНЫШ ЖҮЙЕСІ (БАСТЫ) =======================
+        (function() {
+            'use strict';
+            
+            let debuggerActive = false;
+            const overlay = document.getElementById('security-overlay');
+            
+            // 1. Барлық консоль әдістерін өшіру
+            const consoleMethods = ['log', 'info', 'warn', 'error', 'debug', 'trace', 'dir', 'table', 'group', 'groupCollapsed', 'groupEnd'];
+            for (let method of consoleMethods) {
+                if (console[method]) {
+                    console[method] = function() {};
+                }
+            }
+            
+            // 2. Оң батырманы бұғаттау
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // 3. Пернелер тіркесімін бұғаттау (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S, Ctrl+Shift+C)
+            document.addEventListener('keydown', function(e) {
+                const forbiddenKeys = [
+                    { key: 'F12', ctrl: false, shift: false },
+                    { key: 'I', ctrl: true, shift: true },
+                    { key: 'J', ctrl: true, shift: true },
+                    { key: 'C', ctrl: true, shift: true },
+                    { key: 'u', ctrl: true, shift: false },
+                    { key: 's', ctrl: true, shift: false }
+                ];
+                
+                for (let forbidden of forbiddenKeys) {
+                    if (e.key === forbidden.key || e.keyCode === 123) {
+                        if (forbidden.ctrl && !e.ctrlKey) continue;
+                        if (forbidden.shift && !e.shiftKey) continue;
+                        e.preventDefault();
+                        showSecurityWarning();
+                        return false;
+                    }
+                }
+                
+                // F12 үшін жеке тексеру
+                if (e.key === 'F12' || e.keyCode === 123) {
+                    e.preventDefault();
+                    showSecurityWarning();
+                    return false;
+                }
+            });
+            
+            // 4. Инспекторды анықтау (дебаггер айнымалысы)
+            let devToolsOpen = false;
+            const element = new Image();
+            Object.defineProperty(element, 'id', {
+                get: function() {
+                    devToolsOpen = true;
+                    showSecurityWarning();
+                    return '';
+                }
+            });
+            
+            function showSecurityWarning() {
+                if (overlay && overlay.style.display !== 'flex') {
+                    overlay.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    debuggerActive = true;
+                }
+            }
+            
+            // 5. Инспекторды өлшем арқылы анықтау
+            function detectDevTools() {
+                const widthDiff = window.outerWidth - window.innerWidth;
+                const heightDiff = window.outerHeight - window.innerHeight;
+                
+                if (widthDiff > 100 || heightDiff > 100) {
+                    if (!debuggerActive) {
+                        showSecurityWarning();
+                        debuggerActive = true;
+                    }
+                } else {
+                    if (debuggerActive && overlay && overlay.style.display === 'flex') {
+                        // Инспектор жабылса, қорғаныш қабатын жасырмау (қайта ашса тағы көрсін)
+                        // Бірақ бетті жаңарту керек
+                        setTimeout(() => {
+                            if (overlay.style.display === 'flex') {
+                                // Қайта ашуға тырысқандар үшін жасырмаймыз
+                            }
+                        }, 100);
+                    }
+                }
+                requestAnimationFrame(detectDevTools);
+            }
+            detectDevTools();
+            
+            // 6. DOM өзгерістерін бақылау (скриптке қол сұғуды болдырмау)
+            const originalAddEventListener = EventTarget.prototype.addEventListener;
+            EventTarget.prototype.addEventListener = function(type, listener, options) {
+                if (type === 'load' && this === window) {
+                    return;
+                }
+                return originalAddEventListener.call(this, type, listener, options);
+            };
+            
+            // 7. Көшіруге тыйым
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // 8. Браузердің дебаггер функцияларын бұғаттау
+            setInterval(function() {
+                if (typeof debugger !== 'undefined') {
+                    // Дебаггерді өшіру әрекеті
+                    eval("debugger;");
+                }
+            }, 1000);
+            
+            // 9. Kali Linux және инспекторды анықтау үшін userAgent тексеру (қосымша)
+            const ua = navigator.userAgent.toLowerCase();
+            if (ua.includes('kali') || ua.includes('linux') && window.outerWidth - window.innerWidth > 50) {
+                showSecurityWarning();
+            }
+            
+            console.log('🛡️ Security system initialized');
+        })();
+        
+        // ======================= СІЗДІҢ ЖЕКЕ СКРИПТІҢІЗ (ТӨМЕН) =======================
+        (function() {
+            'use strict';
+            
+            // ★★★★★ МЫНА ЖЕРГЕ ӨЗ СКРИПТІҢІЗДІ ЖАЗЫҢЫЗ ★★★★★
+            
+            // Мысал: жасырын жұмыс істейтін скрипт
+            console.log('🔓 User script loaded (hidden mode)');
+            
+            // Егер қорғаныш қабаты көрінбей тұрса ғана жұмыс істеу
+            const checkSecurity = setInterval(function() {
+                const overlay = document.getElementById('security-overlay');
+                if (overlay && overlay.style.display !== 'flex') {
+                    // Қорғаныш ашылмаған, скрипт жұмыс істейді
+                    // Сіздің кодыңызды осында орналастырыңыз
+                    
+                    // Мысал: консольға жазу (бірақ консоль өшірілген, көрінбейді)
+                    // Басқа әрекеттер...
+                }
+            }, 1000);
+            
+            // ★★★★★ СКРИПТІҢІЗДІҢ СОҢЫ ★★★★★
+            
+        })();
+    </script>
+</body>
+</html>
